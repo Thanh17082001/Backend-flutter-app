@@ -1,17 +1,17 @@
-const ContactService = require("../services/contact.service");
+const NewsService = require("../services/news.service");
 const MongoDB = require("../utils/mongodb.utils");
 const ApiError = require("../api-error");
 const { response } = require("express");
 
 exports.create = async (req, res, next) => {
-    if (!req.body?.name) {
+    if (!req.body?.title) {
         return next(new ApiError(400, "Name can not be empty"));
         // return res.send(req.body);
     }
 
     try {
-        const contactService = new ContactService(MongoDB.client);
-        const document = await contactService.create(req.body);
+        const newsService = new NewsService(MongoDB.client);
+        const document = await newsService.create(req.body);
         return res.send(document);
     }
     catch (error) {
@@ -25,13 +25,8 @@ exports.findAll = async (req, res, next) => {
     let documents = [];
 
     try {
-        const contactService = new ContactService(MongoDB.client);
-        const {name} = req.query;
-        if(name) {
-            documents = await contactService.findByName(name);
-        } else {
-            documents = await contactService.find({});
-        }
+        const newsService = new NewsService(MongoDB.client);
+        documents = await newsService.find({})
     } catch (error) {
         return next (
             new ApiError(500, "An error occurred while retrieving contacts")

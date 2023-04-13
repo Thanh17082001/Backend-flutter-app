@@ -1,25 +1,24 @@
 const {ObjectId} = require("mongodb");
 
-class ContactService {
+class NewsService {
     constructor(client) {
-        this.contact = client.db().collection("products");
+        this.news = client.db().collection("news");
     }
 
-    extracConactData(payload) {
-        const contact = {
-            name: payload.name,
+    extracNewsData(payload) {
+        const news = {
+            title: payload.title,
             description: payload.description,
-            price: payload.price,
-            image: payload.image,
+            image: payload.imageUrl,
         };
 
-        return contact;
+        return news;
     }
 
     async create(payload) {
-        const contact = this.extracConactData(payload);
-        const result = await this.contact.findOneAndUpdate(
-            contact,
+        const news = this.extracNewsData(payload);
+        const result = await this.news.findOneAndUpdate(
+            news,
             {$set: {}},
             {returnDocument: "after", upsert: true}
         );
@@ -27,8 +26,8 @@ class ContactService {
     }
 
     async find(filter) {
-        const cursor = await this.Contact.find(filter);
-        return await cursor.toArray();
+        const cursor = await this.news.find(filter);
+        return cursor.toArray();
     }
 
     async findbyName(name) {
@@ -38,7 +37,7 @@ class ContactService {
     }
 
     async findById(id) {
-        return await this.Contact.findOne({
+        return await this.news.findOne({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });
     }
@@ -48,7 +47,7 @@ class ContactService {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
         const update = this.extracConactData(payload);
-        const result = await this.Contact.findOneAndUpdate(
+        const result = await this.news.findOneAndUpdate(
             filter,
             {$set: update},
             {returnDocument: "after"}
@@ -57,16 +56,16 @@ class ContactService {
     }
 
     async delete(id) {
-        const result = await this.Contact.fineOneAndDelete({
+        const result = await this.news.fineOneAndDelete({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });
         return result.value;
     }
 
     async deleteAll() {
-        const result = await this.Contact.deleteMany({});
+        const result = await this.news.deleteMany({});
         return result.deletedCount;
     }
 }
 
-module.exports = ContactService;
+module.exports = NewsService;
