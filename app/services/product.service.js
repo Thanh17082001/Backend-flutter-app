@@ -1,25 +1,25 @@
 const {ObjectId} = require("mongodb");
 
-class ContactService {
+class ProductService {
     constructor(client) {
-        this.contact = client.db().collection("products");
+        this.product = client.db().collection("products");
     }
 
     extracConactData(payload) {
-        const contact = {
+        const product = {
             name: payload.name,
             description: payload.description,
             price: payload.price,
             image: payload.image,
         };
 
-        return contact;
+        return product;
     }
 
     async create(payload) {
-        const contact = this.extracConactData(payload);
-        const result = await this.contact.findOneAndUpdate(
-            contact,
+        const product = this.extracConactData(payload);
+        const result = await this.product.findOneAndUpdate(
+            product,
             {$set: {}},
             {returnDocument: "after", upsert: true}
         );
@@ -27,7 +27,7 @@ class ContactService {
     }
 
     async find(filter) {
-        const cursor = await this.contact.find(filter);
+        const cursor = await this.product.find(filter);
         return cursor.toArray();
     }
 
@@ -38,7 +38,7 @@ class ContactService {
     }
 
     async findById(id) {
-        return await this.Contact.findOne({
+        return await this.product.findOne({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });
     }
@@ -48,7 +48,7 @@ class ContactService {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         };
         const update = this.extracConactData(payload);
-        const result = await this.contact.findOneAndUpdate(
+        const result = await this.product.findOneAndUpdate(
             filter,
             {$set: update},
             {returnDocument: "after"}
@@ -57,16 +57,16 @@ class ContactService {
     }
 
     async delete(id) {
-        const result = await this.contact.fineOneAndDelete({
+        const result = await this.product.findOneAndDelete({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });
-        return id;
+        return result;
     }
 
     async deleteAll() {
-        const result = await this.contact.deleteMany({});
+        const result = await this.product.deleteMany({});
         return result.deletedCount;
     }
 }
 
-module.exports = ContactService;
+module.exports = ProductService;
